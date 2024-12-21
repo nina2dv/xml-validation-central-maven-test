@@ -65,16 +65,16 @@
 
     <qualities>
         <quality name="Reputation" description="Reputation of the Manufacturer" exported="false">
-            <value>...</value>
+            <value>...</value> <!-- numeric exp, string here -->
         </quality>
 
         <quality name="FinancialGain" description="Financial Gain" exported="false">
-            <value>...</value>  <!--value can be numeric exp, string here-->
+            <value>...</value>  <!-- numeric exp, string here -->
                 <!-- No need for contribution links as they are represented in value tag -->
         </quality>
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
-            <value>f</value>
+            <value>Reputation + FinancialGain</value> <!-- f -->
         </quality>
     </qualities>
 
@@ -105,18 +105,18 @@
     <tasks>
         <task name="SourceDomestically" description="Source materials from a domestic supplier">
             <precondition>materialAvailable</precondition>
-<!--could have contributesTo here, but none examples have it-->
+            <!-- can have contributesTo here, but none examples have it-->
             <effectGroup>
                 <effect name="successDeliveredInTimeDom" satisfying="true" probability="0.75"
                         description="Successful">
-                    <!-- Could have precondition here, but none examples have it -->
+                    <!-- can have precondition here, but none examples have it -->
 
                     <!-- No need for contributesTo here as it is defined in quality             -->
                     <!--  <contributesTo>-->
                     <!--      <quality ref="Reputation" value="1.0"/>-->
                     <!--   </contributesTo>-->
                     <turnsTrue>deliveredInTimeDom</turnsTrue>
-                    <!--could have turnsFalse here, but none examples have it-->
+                    <!-- can have turnsFalse here, but none examples have it-->
                 </effect>
                 <effect name="successDeliveredLateDom" satisfying="true" probability="0.20"
                         description="Successful">

@@ -27,7 +27,7 @@ actor Controller {
 
     exported quality ReachIdealTemperature {
         description: "Reach Ideal Temperature";
-        value: f2; // numericExpression: previous(ReachIdealTemperature) and heaterOn current value
+        value: previous(ReachIdealTemperature) + 1.0; // f2
     }
 
     quality MaximizeComfort {

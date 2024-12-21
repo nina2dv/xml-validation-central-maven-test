@@ -38,7 +38,7 @@
 
     <qualities>
         <quality name="ReachIdealTemperature" exported="true" description="Reach Ideal Temperature">
-            <value>f2</value> <!--  previous(ReachIdealTemperature) and heaterOn current value-->
+            <value>previous(ReachIdealTemperature) + 1.0</value> <!--f2-->
         </quality>
 
         <quality name="MaximizeComfort" description="Maximize Comfort" exported="false">

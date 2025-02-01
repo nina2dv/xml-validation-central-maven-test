@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actor name="Manufacturer">
-    <preconditions>
-        <precondition name="materialAvailable" description="Material availability in stock">
-            boolean exp here
-        </precondition>
-
-        <precondition name="hasManufacturingCapacity" description="Manufacturer has capacity to build in-house">
-            boolean exp here, string for now
-        </precondition>
-    </preconditions>
-
+<actor
+        xmlns="https://example.org/istar-rl"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://example.org/istar-rl ../xsd/istar-rl-schema.xsd"
+        name="Manufacturer">
     <predicates>
         <!--  Each predicate is wrapped inside an effect, content inside predicate is variable/identifier-->
         <predicate primitive="true" init="false" exported="false"
@@ -63,21 +57,62 @@
         </predicate>
     </predicates>
 
+
+    <!-- Validation
+            1. Every atom in the boolean expression must be declared as a predicate
+    -->
+    <preBoxes>
+        <preBox name="materialAvailable" description="Material availability in stock">
+            [boolean exp here grounded on predicates declared above string for now]
+            <!-- <and><atom>conj1</atom><atom>conj2</atom></and> -->
+        </preBox>
+
+        <preBox name="hasManufacturingCapacity" description="Manufacturer has capacity to build in-house">
+            [boolean exp here grounded on predicates declared above string for now]
+        </preBox>
+    </preBoxes>
+
+
+
+    <!-- Validation
+            Every atom in the numeric expression must be declared as a predicate or other quality
+    -->
     <qualities>
         <quality name="Reputation" description="Reputation of the Manufacturer" exported="false">
-            <value>...</value> <!-- numeric exp, string here -->
+            <value>
+                [numeric exp here grounded on predicates declared above string for now]
+            </value> <!-- numeric exp, string here -->
         </quality>
 
         <quality name="FinancialGain" description="Financial Gain" exported="false">
-            <value>...</value>  <!-- numeric exp, string here -->
-                <!-- No need for contribution links as they are represented in value tag -->
+            <value>
+                [numeric exp here grounded on predicates declared above string for now]
+            </value>  <!-- numeric exp, string here -->
+            <!-- No need for contribution links as they are represented in value tag -->
         </quality>
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
-            <value>Reputation + FinancialGain</value> <!-- f -->
+            <value>
+                [numeric exp here grounded on predicates declared above string for now for example:]
+                Reputation + FinancialGain
+            </value>
         </quality>
     </qualities>
 
+
+    <!-- Validation
+            1. childGoal/childTask should be defined
+            2. Some goals do not have any refinment (they are leaf level goals). We may need to issue just a warning.
+            3. Pre/npr link can mention (a) preBox, (b) goal, (c) task, or (d) effect.
+            4. subGoal and subTask must be defined somewhere
+            5. AND refinmens have 2 or more children, OR refinments can have one or more.
+            6. If root is true, episodeLength is mandatory. If missing throws warning and says episodeLength not given, default of 1 is assumed.
+    -->
+    <!-- Comments
+            1. childGoal/childTask turn them into subGoal and subTask
+            2. By default root = "false"?
+            3. Change precondition to pre
+    -->
     <goals>
         <goal name="ProductManufactured" root="true" description="Product Manufactured" episodeLength="1">
             <refinement type="AND">
@@ -93,8 +128,9 @@
             </refinement>
         </goal>
 
+
         <goal name="ManufacturingCompleted" description="Manufacturing Completed">
-            <precondition>MaterialOrdered</precondition>
+            <pre>MaterialOrdered</pre>
             <refinement type="OR">
                 <childTask ref="BuildInHouse"/>
                 <childTask ref="AssignToSpecialists"/>
@@ -102,20 +138,28 @@
         </goal>
     </goals>
 
+
+    <!-- Validation
+            1. Each task should be referenced by exactly one goal (warning).
+            2. pre/npr origin must exist (error)
+            3. Pre/npr link can mention (a) preBox, (b) goal, (c) task, or (d) effect.
+            4. Content of turns true and turns false must exist in predicates (error).
+    -->
+
+    <!-- Comments
+            1.We don't need contributes anymore. It is all in the formula in the qualities.
+            2. Precedences / nprs can target goals, effects, and tasks
+            3. default for effect is that it is satisfying, warning if it is missing.
+            4. Error if probability is missing.
+            5. For all elements, warning if description is missing.
+    -->
     <tasks>
         <task name="SourceDomestically" description="Source materials from a domestic supplier">
-            <precondition>materialAvailable</precondition>
-            <!-- can have contributesTo here, but none examples have it-->
+            <pre>materialAvailable</pre>
             <effectGroup>
                 <effect name="successDeliveredInTimeDom" satisfying="true" probability="0.75"
                         description="Successful">
-                    <!-- can have precondition here, but none examples have it -->
-
-                    <!-- No need for contributesTo here as it is defined in quality             -->
-                    <!--  <contributesTo>-->
-                    <!--      <quality ref="Reputation" value="1.0"/>-->
-                    <!--   </contributesTo>-->
-                    <turnsTrue>deliveredInTimeDom</turnsTrue>
+                    <!-- can have pre/npr here, but none examples have it -->
                     <!-- can have turnsFalse here, but none examples have it-->
                 </effect>
                 <effect name="successDeliveredLateDom" satisfying="true" probability="0.20"
@@ -147,7 +191,7 @@
         </task>
 
         <task name="BuildInHouse" description="Build the product in-house">
-            <precondition>hasManufacturingCapacity</precondition>
+            <pre>hasManufacturingCapacity</pre>
             <effectGroup>
                 <effect name="successInHGood" satisfying="true" probability="0.5"
                         description="Successful">
@@ -161,7 +205,7 @@
         </task>
 
         <task name="AssignToSpecialists" description="Assign product manufacturing to specialists">
-            <precondition>!SourceFromAbroad</precondition>
+            <npr>SourceFromAbroad</npr>
             <effectGroup>
                 <effect name="successSpecGood" satisfying="true" probability="0.7"
                         description="Successful">
@@ -174,4 +218,5 @@
             </effectGroup>
         </task>
     </tasks>
+
 </actor>

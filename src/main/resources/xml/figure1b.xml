@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actor name="HeatingController">
+<actor
+        xmlns="https://example.org/istar-rl"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://example.org/istar-rl ../xsd/istar-rl-schema.xsd"
+        name="HeatingController">
     <predicates>
         <!--        Each predicate is wrapped inside an effect, content inside predicate is variable/identifier-->
         <predicate primitive="true" init="false" exported="false"
@@ -23,17 +27,16 @@
         </predicate>
     </predicates>
 
-    <!-- Indirect effects -->
-    <derivedEffects>
+
+    <!-- Comments
+		1. "Indirect" effects
+		2. We dont need the contributesTo
+	-->
+    <indirectEffects>
         <effect name="heaterOn" exported="true" description="Heater is on">
-            <!--   can have turnTrue, turnFalse here-->
-            <formula>f1</formula>  <!-- (previous(heaterOn) and those signals-->
-            <contributesTo>
-                <quality ref="ReachIdealTemperature" value="1.0"/>
-                <quality ref="MinimizeRunningTime" value="f3"/>
-            </contributesTo>
+            <formula>f1</formula>  <!-- pretend it is a string where pre-elements are mentioned as previous(heaterOn) -->
         </effect>
-    </derivedEffects>
+    </indirectEffects>
 
 
     <qualities>
@@ -42,7 +45,7 @@
         </quality>
 
         <quality name="MaximizeComfort" description="Maximize Comfort" exported="false">
-            <value>f5</value>
+            <value>f5</value> <!-- a string -->
         </quality>
 
         <quality name="MinimizeCost" description="Minimize Cost" exported="false">

@@ -1,4 +1,4 @@
-### Maven profiles to validate XML against XSD or Schematron.
+## Maven profiles to validate XML against XSD or Schematron.
 
 XSD: `mvn clean verify -P xsd-validation`
 
@@ -38,10 +38,83 @@ mvn verify -P all-validation \
     -Dargument.xmlFile=path/to/new_test.xml
 ```
 
+## JAR
 ```bash
 java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
 ```
 
+## Pull Package
+Add this to pom.xml:
+```xml
+<properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<dependencies>
+    <dependency>
+        <groupId>io.github.nina2dv</groupId>
+        <artifactId>xml-validation</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+
+
+<repositories>
+    <repository>
+        <id>github</id>
+        <name>GitHub Packages</name>
+        <url>https://maven.pkg.github.com/nina2dv/xml-istar-rl</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <configuration>
+                <mainClass>org.example.MyValidatorApp</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+Example java project:
+```java
+package org.example;
+        
+import com.example.validation.XsdValidator;
+import com.example.validation.ValidationResult;
+
+public class MyValidatorApp {
+    public static void main(String[] args) {
+        try {
+            ValidationResult result = XsdValidator.validateXMLSchema("path/to/schema.xsd", "path/to/file.xml");
+            if (result.isValid()) {
+                System.out.println("XML is valid!");
+            } else {
+                System.err.println("XML is not valid: " + result.getErrors());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+```bash
+mvn compile exec:java
+# Or
+mvn compile exec:java -Dexec.args="path/to/schema.xsd path/to/file.xml"
+```
 ---
 
 The [xslt](https://github.com/nina2dv/xml-istar-rl/tree/main/src/main/resources/schematron/xslt) directory contains unzipped files from `schxslt-1.10.1-xslt-only.zip`

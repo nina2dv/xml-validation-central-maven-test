@@ -64,13 +64,13 @@
         <preBox name="materialAvailable" description="Material availability in stock">
             <and>
                 <previous>
-                    <atom>bruh</atom>
+                    <atom>test</atom>
                 </previous>
                 <gt>
                     <left>5</left>
                     <right>2</right>
                 </gt>
-                <atom>wow</atom>
+                <atom>testing</atom>
             </and>
         </preBox>
 

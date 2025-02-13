@@ -60,21 +60,6 @@ Add this to pom.xml:
     </dependency>
 </dependencies>
 
-
-<repositories>
-    <repository>
-        <id>github</id>
-        <name>GitHub Packages</name>
-        <url>https://maven.pkg.github.com/nina2dv/xml-istar-rl</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-
 <build>
     <plugins>
         <plugin>

@@ -4,7 +4,7 @@ XSD: `mvn clean verify -P xsd-validation`
 
 Schematron: `mvn clean verify -P schematron-validation`
 
-Both XSD and Schematron: ` mvn clean verify -P all-validation`
+Both XSD and Schematron: `mvn clean verify -P all-validation`
 
 ---
 
@@ -38,9 +38,13 @@ mvn verify -P all-validation \
     -Dargument.xmlFile=path/to/new_test.xml
 ```
 
+```bash
+java -jar xml-validator-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
+```
+
 ---
 
-The [xslt](https://github.com/nina2dv/istar-rl-xml/blob/6528ac4c97a791826feb60a22776333fe91b3b7d/src/main/resources/schematron/xslt) directory contains unzipped files from `schxslt-1.10.1-xslt-only.zip`
+The [xslt](https://github.com/nina2dv/xml-istar-rl/tree/main/src/main/resources/schematron/xslt) directory contains unzipped files from `schxslt-1.10.1-xslt-only.zip`
 in [SchXslt releases](https://github.com/schxslt/schxslt/releases).
 
 Validation using schematron in Java was inspired from this [video](https://www.youtube.com/watch?v=0OCULBADZr4&t=2s).

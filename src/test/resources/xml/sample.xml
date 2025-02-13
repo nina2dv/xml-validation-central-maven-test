@@ -2,9 +2,10 @@
 <actor
         xmlns="https://example.org/istar-t"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="https://example.org/istar-t ../xsd/istar-rl-schema_v2.xsd"
+        xsi:schemaLocation="https://example.org/istar-t ../xsd/sample.xsd"
         name="Manufacturer">
     <predicates>
+        <!--  Each predicate is wrapped inside an effect, content inside predicate is variable/identifier-->
         <predicate primitive="true" init="false" exported="false"
                    description="Materials delivered on time (domestic)">
             deliveredInTimeDom
@@ -62,22 +63,16 @@
     -->
     <preBoxes>
         <preBox name="materialAvailable" description="Material availability in stock">
-            <and>
-                <previous>
-                    <atom>bruh</atom>
-                </previous>
-                <gt>
-                    <left>5</left>
-                    <right>2</right>
-                </gt>
-                <atom>wow</atom>
-            </and>
+            [boolean exp here grounded on predicates declared above string for now]
+            <!-- <and><atom>conj1</atom><atom>conj2</atom></and> -->
         </preBox>
 
         <preBox name="hasManufacturingCapacity" description="Manufacturer has capacity to build in-house">
-            <boolConst>false</boolConst>
+            [boolean exp here grounded on predicates declared above string for now]
         </preBox>
     </preBoxes>
+
+
 
     <!-- Validation
             Every atom in the numeric expression must be declared as a predicate or other quality
@@ -85,23 +80,24 @@
     <qualities>
         <quality name="Reputation" description="Reputation of the Manufacturer" exported="false">
             <value>
-                5
-            </value>
+                [numeric exp here grounded on predicates declared above string for now]
+            </value> <!-- numeric exp, string here -->
         </quality>
 
         <quality name="FinancialGain" description="Financial Gain" exported="false">
             <value>
-                5
-            </value>
+                [numeric exp here grounded on predicates declared above string for now]
+            </value>  <!-- numeric exp, string here -->
+            <!-- No need for contribution links as they are represented in value tag -->
         </quality>
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
             <value>
+                [numeric exp here grounded on predicates declared above string for now for example:]
                 Reputation + FinancialGain
             </value>
         </quality>
     </qualities>
-
 
 
     <!-- Validation
@@ -116,7 +112,6 @@
             1. childGoal/childTask turn them into subGoal and subTask
             2. By default root = "false"?
             3. Change precondition to pre
-
     -->
     <goals>
         <goal name="ProductManufactured" root="true" description="Product Manufactured" episodeLength="1">
@@ -164,8 +159,8 @@
             <effectGroup>
                 <effect name="successDeliveredInTimeDom" satisfying="true" probability="0.75"
                         description="Successful">
-
-                    <turnsTrue>deliveredInTimeDom</turnsTrue>
+                    <!-- can have pre/npr here, but none examples have it -->
+                    <!-- can have turnsFalse here, but none examples have it-->
                 </effect>
                 <effect name="successDeliveredLateDom" satisfying="true" probability="0.20"
                         description="Successful">

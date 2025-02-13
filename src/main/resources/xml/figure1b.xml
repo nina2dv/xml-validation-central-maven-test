@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actor
-        xmlns="https://example.org/istar-rl"
+        xmlns="https://example.org/istar-t"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="https://example.org/istar-rl ../xsd/istar-rl-schema.xsd"
+        xsi:schemaLocation="https://example.org/istar-t ../xsd/istar-rl-schema.xsd"
         name="HeatingController">
     <predicates>
         <!--        Each predicate is wrapped inside an effect, content inside predicate is variable/identifier-->
@@ -33,9 +33,9 @@
 		2. We dont need the contributesTo
 	-->
     <indirectEffects>
-        <effect name="heaterOn" exported="true" description="Heater is on">
+        <indirectEffect name="heaterOn" exported="true" description="Heater is on">
             <formula>f1</formula>  <!-- pretend it is a string where pre-elements are mentioned as previous(heaterOn) -->
-        </effect>
+        </indirectEffect>
     </indirectEffects>
 
 
@@ -75,10 +75,10 @@
         <task name="SignalHeaterOn" description="Signal the heater to turn on">
             <effectGroup>
                 <effect name="successSignalOnS" satisfying="true" probability="0.95" description="Successful">
-                    <turnsTrue>SignalOnS</turnsTrue>
+                    <turnsTrue>signalOnS</turnsTrue>
                 </effect>
                 <effect name="successSignalOnF" satisfying="true" probability="0.05" description="Successful">
-                    <turnsTrue>SignalOnF</turnsTrue>
+                    <turnsTrue>signalOnF</turnsTrue>
                 </effect>
             </effectGroup>
         </task>
@@ -86,10 +86,10 @@
         <task name="SignalHeaterOff" description="Signal the heater to turn off">
             <effectGroup>
                 <effect name="successSignalOffS" satisfying="true" probability="0.95" description="Successful">
-                    <turnsTrue>SignalOffS</turnsTrue>
+                    <turnsTrue>signalOffS</turnsTrue>
                 </effect>
                 <effect name="successSignalOffF" satisfying="true" probability="0.05" description="Successful">
-                    <turnsTrue>SignalOffF</turnsTrue>
+                    <turnsTrue>signalOffF</turnsTrue>
                 </effect>
             </effectGroup>
         </task>

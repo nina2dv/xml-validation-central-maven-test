@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This XML is well-formed but intentionally contains multiple schema violations.
+  It is designed to produce at least 4 errors and 4 warnings when validated against the provided schema.
+
+  **Warnings** (if your processor is lenient):
+  1. In <predicate>, the boolean attributes use non‐canonical values (“True”, “False”, “True” instead of “true”/“false”).
+  2. In the first <indirectEffect>, the attribute exported="False" (should be “false”).
+  3. In the first <goal>, the attribute root="False" (should be “false”).
+  4. In the second <effect> inside an effectGroup, the attribute satisfying="False" (non‐canonical).
+
+  **Errors**:
+  1. An unexpected element <unexpectedElement> is present.
+  2. In <preBoxes>, the contained <preBox> is missing the required attribute “name”.
+  3. In <indirectEffects>, the second <indirectEffect> is missing the required attribute “name”.
+  4. In <qualities>, the contained <quality> is missing the required attribute “name”.
+  5. In <goals>, the second <goal> is missing the required attribute “name”.
+  6. In <tasks>, the contained <task> is missing the required attribute “name”.
+  7. In the <effectGroup> of that task, the second <effect> is missing the required attribute “probability”.
+-->
+<actor xmlns="https://example.org/istar-t"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://example.org/istar-t ../xsd/sample.xsd"
+       name="TestActor">
+
+    <!-- predicates: using non‐canonical boolean values to trigger warnings -->
+    <predicates>
+        <predicate primitive="True" init="False" exported="True" description="Warning test for predicate">
+            predicateValue
+        </predicate>
+    </predicates>
+
+    <!-- Error: unexpected element not defined in the schema -->
+    <unexpectedElement>This element is not allowed</unexpectedElement>
+
+    <!-- preBoxes: <preBox> missing required attribute "name" -->
+    <preBoxes>
+        <preBox description="Missing name attribute">Some expression</preBox>
+    </preBoxes>
+
+    <!-- indirectEffects: one element with a warning and one with an error -->
+    <indirectEffects>
+        <!-- Warning: non-canonical boolean for exported -->
+        <indirectEffect name="effect1" exported="False" description="Test indirect effect">
+            <formula>value * 2</formula>
+        </indirectEffect>
+        <!-- Error: missing required attribute "name" -->
+        <indirectEffect description="Missing name attribute">
+            <formula>value * 3</formula>
+        </indirectEffect>
+    </indirectEffects>
+
+    <!-- qualities: error because the <quality> is missing required attribute "name" -->
+    <qualities>
+        <quality description="Quality without a name">
+            <value>100</value>
+        </quality>
+    </qualities>
+
+    <!-- goals: one goal uses non-canonical boolean and one is missing required attribute -->
+    <goals>
+        <!-- Warning: non-canonical boolean for root -->
+        <goal name="goal1" root="False" description="Goal with non-canonical boolean" episodeLength="10">
+            <pre>preBox1</pre>
+            <npr>preBox2</npr>
+            <refinement type="AND">
+                <childGoal ref="subGoal1"/>
+                <childTask ref="subTask1"/>
+            </refinement>
+        </goal>
+        <!-- Error: missing required attribute "name" -->
+        <goal root="true" description="Goal missing name" episodeLength="5">
+            <pre>preBox3</pre>
+        </goal>
+    </goals>
+
+    <!-- tasks: error because the <task> is missing required attribute "name" -->
+    <tasks>
+        <task description="Task with missing name">
+            <pre>Some precondition</pre>
+            <effectGroup>
+                <effect name="effect2" probability="0.8" satisfying="true" description="Correct effect">
+                    <turnsTrue>predicate1</turnsTrue>
+                </effect>
+                <!-- Warning: non-canonical boolean for satisfying; Error: missing required attribute "probability" -->
+                <effect name="effect3" satisfying="False" description="Effect missing probability">
+                    <turnsFalse>predicate2</turnsFalse>
+                </effect>
+            </effectGroup>
+        </task>
+    </tasks>
+</actor>

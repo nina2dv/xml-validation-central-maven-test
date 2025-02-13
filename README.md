@@ -39,7 +39,7 @@ mvn verify -P all-validation \
 ```
 
 ```bash
-java -jar xml-validator-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
+java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
 ```
 
 ---

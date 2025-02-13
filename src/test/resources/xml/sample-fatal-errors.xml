@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This XML is intentionally not well-formed to trigger fatal errors.
+  The following issues are present (each of which is a fatal error):
+  1. Missing closing tag for <predicates>.
+  2. Missing closing tag for <quality>.
+  3. Mismatched closing tag for a <goal> element.
+  4. Duplicate attribute "name" in a <task> element.
+-->
+<actor xmlns="https://example.org/istar-t"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://example.org/istar-t ../xsd/sample.xsd"
+       name="TestActor">
+    <predicates>
+        <predicate primitive="true">Value</predicate>
+        <!-- Missing </predicates> here -->
+
+        <preBoxes>
+            <preBox name="box1">Expression</preBox>
+        </preBoxes>
+
+        <indirectEffects>
+            <indirectEffect name="effect1">
+                <formula>value * 2</formula>
+            </indirectEffect>
+        </indirectEffects>
+
+        <qualities>
+            <quality name="quality1">
+            <value>100</value>
+            <!-- Missing </quality> here -->
+        </qualities>
+
+        <goals>
+            <goal name="goal1" root="true">Goal content</goal>
+            <goal name="goal2" root="true" description="Mismatched tag example">Another goal</goals> <!-- Mismatched closing tag -->
+    </goals>
+
+    <tasks>
+        <task name="task1" name="duplicate">Task content</task> <!-- Duplicate attribute "name" -->
+    </tasks>
+</actor>

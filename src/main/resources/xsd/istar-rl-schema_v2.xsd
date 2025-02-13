@@ -116,33 +116,144 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <!-- Each preBox can contain text (the boolean expression) -->
-    <xsd:complexType name="PreBoxType" mixed="true">
+
+
+    <xsd:group name="BooleanExpressionElements">
+        <xsd:choice>
+            <xsd:element name="boolConst" type="BoolConstType"/>
+            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="previous" type="PreviousType"/>
+            <xsd:element name="gt" type="NumericComparisonType"/>
+            <xsd:element name="lt" type="NumericComparisonType"/>
+            <xsd:element name="eq" type="NumericComparisonType"/>
+            <xsd:element name="and" type="BooleanAndType"/>
+            <xsd:element name="or" type="BooleanOrType"/>
+            <xsd:element name="not" type="BooleanNotType"/>
+        </xsd:choice>
+    </xsd:group>
+
+    <!-- Updated BooleanExpressionType.
+         This type now forces a structured XML syntax (no free text)
+         and allows the following alternatives:
+           • A boolean constant (<boolConst>),
+           • A boolean identifier (<atom>),
+           • A previous() function call (<previous>),
+           • A numeric comparison (<gt>, <lt>, or <eq>),
+           • Or combinations via logical operators (<and>, <or>, <not>).
+    -->
+    <xsd:complexType name="BooleanExpressionType">
         <xsd:annotation>
-            <xsd:documentation><![CDATA[
-                Named container for boolean expressions.
-                Example: (fuelLevel > 50) && (systemStatus == OK)
-                Used to define preconditions.
-            ]]></xsd:documentation>
+            <xsd:documentation>
+                A boolean expression is defined recursively as follows:
+
+                • A boolean constant: boolConst (true or false)
+                • A boolean identifier: atom (goal, task, or predicate identifier)
+                • A previous call: previous wrapping an atom
+                • A numeric comparison: one of gt, lt, or eq (each with left/right numeric expressions)
+                • Or a combination of boolean expressions using:
+                and (conjunction), or (disjunction), and not (negation).
+            </xsd:documentation>
         </xsd:annotation>
-        <xsd:attribute name="name" type="xsd:string" use="required">
-            <xsd:annotation>
-                <xsd:documentation><![CDATA[
-                    Attribute: name
-                    Unique identifier for the preBox.
-                    Used to reference the preBox within npr/pre of goals and tasks.
-                ]]></xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
-        <xsd:attribute name="description" type="xsd:string" use="optional">
-            <xsd:annotation>
-                <xsd:documentation><![CDATA[
-                    Attribute: description
-                    Optional description providing details about the preBox.
-                    Helps in understanding the purpose and usage of the precondition expression.
-                ]]></xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
+        <xsd:group ref="BooleanExpressionElements"/>
+    </xsd:complexType>
+
+    <!-- Boolean constant: must be "true" or "false" -->
+    <xsd:simpleType name="BoolConstType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Boolean constants; allowed values are "true" and "false".
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- The "previous" function: wraps an atom -->
+    <xsd:complexType name="PreviousType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a previous value reference. For example,
+                previous(predicate_identifier) is modeled as:
+                &lt;previous&gt;&lt;atom&gt;predicate_identifier&lt;/atom&gt;&lt;/previous&gt;
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="atom" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- A numeric comparison: both operands are numeric expressions -->
+    <xsd:complexType name="NumericComparisonType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A numeric comparison consists of a left and right operand.
+                Use this type for expressions like numericExpr > numericConstant,
+                numericExpr numericConstant, or numericExpr == numericConstant.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="left" type="NumericExpressionType"/>
+            <xsd:element name="right" type="NumericExpressionType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BooleanAndType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The and element represents logical conjunction. It must contain at least two boolean expressions.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="BooleanExpressionElements" minOccurs="2" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="BooleanOrType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The or element represents logical disjunction. It must contain at least one boolean expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="BooleanExpressionElements" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BooleanNotType">
+        <xsd:annotation>
+            <xsd:documentation>
+                The not element represents logical negation and must contain exactly one boolean expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="BooleanExpressionElements" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <!-- Example: Updating PreBoxType to force structured boolean content -->
+    <xsd:complexType name="PreBoxType">
+        <xsd:complexContent>
+            <xsd:extension base="BooleanExpressionType">
+                <xsd:attribute name="name" type="xsd:string" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Unique identifier for the preBox.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="description" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Optional description for the preBox.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 
     <!-- ===== IndirectEffects ===== -->
@@ -215,6 +326,33 @@
         </xsd:attribute>
     </xsd:complexType>
 
+    <!-- Numeric expression for quality values -->
+    <!--
+      This simple type allows only numeric constants (with optional decimals)
+      and identifiers (for predicates/qualities) combined with the operators
+      +, -, *, / and parentheses. (Whitespace is allowed.)
+      NOTE: This pattern only restricts the allowed characters; it does not
+            verify that parentheses are balanced or that the expression is
+            syntactically correct. Further validation (or use of Schematron)
+            would be needed to enforce those rules.
+    -->
+    <xsd:simpleType name="NumericExpressionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Numeric expressions must be built only from:
+                - numeric constants (e.g. 3, 4.56),
+                - identifiers (which must refer to a declared predicate or quality),
+                - the operators +, -, *, /,
+                - and parentheses (which may be nested).
+                (Additional validation is required to ensure that each identifier corresponds
+                to a declared atom.)
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[\s0-9A-Za-z_+\-*/().]+"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
     <!-- ===== Qualities ===== -->
     <!-- Removes the old <contributesTo>; all numeric expressions are in the <value> directly -->
     <xsd:complexType name="QualitiesType">
@@ -244,28 +382,21 @@
         </xsd:sequence>
     </xsd:complexType>
 
+    <!-- Modified QualityType so that its <value> element uses NumericExpressionType -->
     <xsd:complexType name="QualityType">
         <xsd:annotation>
-            <xsd:documentation><![CDATA[
-                Numeric quality attribute with optional value expression.
-                Attributes:
-                - name: Unique identifier for the quality.
-                - description: Optional explanation of the quality.
-                - exported: Indicates if the quality is visible externally or used in the exported state set for RL. (default: false)
-                - root: Marks the quality as a root attribute for analysis. (default: false)
-                The value element holds the numeric expression defining the quality's value, which can include contributions from multiple effects.
-                Qualities are essential for defining the reward structure in RL simulations, allowing the agent to optimize based on these measures.
-            ]]></xsd:documentation>
+            <xsd:documentation>
+                Numeric quality attribute. The value element now must contain a numeric expression
+                that uses only numeric constants, identifiers (declared predicates or qualities),
+                the operators +, -, *, / and parentheses (which may be nested).
+            </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="value" type="xsd:string" minOccurs="0" maxOccurs="1">
+            <xsd:element name="value" type="NumericExpressionType" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
-                    <xsd:documentation><![CDATA[
-                        Element: value
+                    <xsd:documentation>
                         Contains the numeric expression representing the quality's value.
-                        Expressions can include contributions from multiple effects, allowing for complex aggregation of quality metrics.
-                        For root qualities, this typically represents an aggregate measure of overall performance or satisfaction.
-                    ]]></xsd:documentation>
+                    </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
         </xsd:sequence>

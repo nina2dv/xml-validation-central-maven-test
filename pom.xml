@@ -3,19 +3,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.nina2dv</groupId>
+    <artifactId>xml-validator</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-    <groupId>com.example</groupId>
-    <artifactId>istar-rl-validator</artifactId>
-    <version>1.0.0</version>
+    <name>XML Validator</name>
+    <description>Validate XML against XSD and Schematron</description>
+    <url>https://github.com/nina2dv/xml-istar-rl</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <argument.schematronFile>src/main/resources/schematron/istar-rl-schematron.sch</argument.schematronFile>
+        <!-- Default arguments used by the exec plugin for testing -->
         <argument.xsdFile>src/main/resources/xsd/istar-rl-schema.xsd</argument.xsdFile>
-        <argument.xmlFile>src/main/resources/xml/figure1a_fixed.xml</argument.xmlFile>
+        <argument.schematronFile>src/main/resources/schematron/istar-rl-schematron.sch</argument.schematronFile>
+        <argument.xmlFile>src/main/resources/xml/figure1a.xml</argument.xmlFile>
     </properties>
 
     <dependencies>
@@ -25,11 +30,48 @@
             <artifactId>Saxon-HE</artifactId>
             <version>12.5</version>
         </dependency>
+
+        <!-- JUnit 5 Dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                    <include>**/*.sch</include>
+                    <include>**/*.xsd</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- Optionally, explicit test resource configuration -->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.sch</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </testResource>
+        </testResources>
+
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -39,9 +81,64 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
+
+            <!-- Maven Shade Plugin for building an executable (uber) JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Exclude duplicate manifest and signature files -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <!-- Merge common resource files -->
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.XmlValidationCli</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/DEPENDENCIES</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/LICENSE</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/NOTICE</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
+
+    <!-- Distribution Management for GitHub Packages -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/nina2dv/xml-istar-rl</url>
+        </repository>
+    </distributionManagement>
+
+    <!-- Maven Profiles for running validations individually -->
     <profiles>
         <!-- Profile for XSD Validation -->
         <profile>
@@ -55,12 +152,12 @@
                         <executions>
                             <execution>
                                 <id>xsd-validate</id>
-                                <phase>verify</phase> <!-- Changed from validate to verify -->
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XMLValidatorRunner</mainClass>
+                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>xsd</argument>
                                         <argument>${argument.xsdFile}</argument>
@@ -86,12 +183,12 @@
                         <executions>
                             <execution>
                                 <id>schematron-validate</id>
-                                <phase>verify</phase> <!-- Changed from validate to verify -->
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XMLValidatorRunner</mainClass>
+                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>schematron</argument>
                                         <argument>${argument.schematronFile}</argument>
@@ -123,7 +220,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XMLValidatorRunner</mainClass>
+                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>xsd</argument>
                                         <argument>${argument.xsdFile}</argument>
@@ -139,7 +236,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XMLValidatorRunner</mainClass>
+                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>schematron</argument>
                                         <argument>${argument.schematronFile}</argument>

@@ -119,7 +119,7 @@
     <xsd:group name="BooleanExpressionElements">
         <xsd:choice>
             <xsd:element name="boolConst" type="BoolConstType"/>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="boolAtom" type="xsd:string"/>
             <xsd:element name="previous" type="PreviousType"/>
 
             <xsd:element name="gt" type="NumericComparisonType"/>
@@ -185,7 +185,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="boolAtom" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -194,7 +194,7 @@
     <xsd:group name="NumericExpressionElements">
         <xsd:choice>
             <xsd:element name="const" type="xsd:decimal"/>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="numAtom" type="xsd:string"/>
             <xsd:element name="previous" type="NumericPreviousType"/>
             <xsd:element name="add" type="NumericNaryOpType"/>
             <xsd:element name="subtract" type="NumericBinaryOpType"/>
@@ -229,7 +229,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="numAtom" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

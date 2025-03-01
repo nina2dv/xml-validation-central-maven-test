@@ -64,13 +64,13 @@
         <preBox name="materialAvailable" description="Material availability in stock">
             <and>
                 <previous>
-                    <atom>test</atom>
+                    <boolAtom>test</boolAtom>
                 </previous>
                 <gt>
                     <left><const>4</const></left>
                     <right><const>5</const></right>
                 </gt>
-                <atom>testing</atom>
+                <boolAtom>testing</boolAtom>
             </and>
         </preBox>
 
@@ -104,8 +104,8 @@
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
             <add>
-                <atom>Reputation</atom>
-                <atom>FinancialGain</atom>
+                <numAtom>Reputation</numAtom>
+                <numAtom>FinancialGain</numAtom>
             </add>
         </quality>
     </qualities>

@@ -18,9 +18,9 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Default arguments used by the exec plugin for testing -->
-        <argument.xsdFile>src/main/resources/xsd/istar-rl-schema.xsd</argument.xsdFile>
-        <argument.schematronFile>src/main/resources/schematron/istar-rl-schematron.sch</argument.schematronFile>
-        <argument.xmlFile>src/main/resources/xml/figure1a.xml</argument.xmlFile>
+        <argument.xsdFile>src/main/resources/xsd/istar-rl-schema_v2.xsd</argument.xsdFile>
+        <argument.schematronFile>src/main/resources/schematron/istar-rl-schematron2.sch</argument.schematronFile>
+        <argument.xmlFile>src/main/resources/xml/figure1a_fixed.xml</argument.xmlFile>
     </properties>
 
     <dependencies>

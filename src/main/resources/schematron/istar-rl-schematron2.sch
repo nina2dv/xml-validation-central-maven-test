@@ -185,7 +185,7 @@
   <!-- Pattern to Check Atoms in Boolean Expressions -->
   <sch:pattern id="CheckBooleanExpressionAtoms">
     <!-- Check atoms in all boolean expressions -->
-    <sch:rule context="istar-t:atom[ancestor::istar-t:preBox or ancestor::istar-t:and or ancestor::istar-t:or or ancestor::istar-t:not]">
+    <sch:rule context="istar-t:boolAtom[ancestor::istar-t:preBox or ancestor::istar-t:and or ancestor::istar-t:or or ancestor::istar-t:not]">
       <sch:let name="actor" value="ancestor::istar-t:actor"/>
       <sch:let name="boolAtom" value="normalize-space(.)"/>
       <sch:let name="predicateNames" value="$actor//istar-t:predicates/istar-t:predicate/normalize-space(.)"/>
@@ -200,7 +200,7 @@
     </sch:rule>
 
     <!-- Check atoms referenced inside a previous element in boolean expressions -->
-    <sch:rule context="istar-t:previous/istar-t:atom[ancestor::istar-t:preBox or ancestor::istar-t:and or ancestor::istar-t:or or ancestor::istar-t:not]">
+    <sch:rule context="istar-t:previous/istar-t:boolAtom[ancestor::istar-t:preBox or ancestor::istar-t:and or ancestor::istar-t:or or ancestor::istar-t:not]">
       <sch:let name="actor" value="ancestor::istar-t:actor"/>
       <sch:let name="boolAtom" value="normalize-space(.)"/>
       <sch:let name="predicateNames" value="$actor//istar-t:predicates/istar-t:predicate/normalize-space(.)"/>
@@ -218,7 +218,7 @@
   <!-- Pattern to Check Atoms in Numeric Expressions -->
   <sch:pattern id="CheckNumericExpressionAtoms">
     <!-- Check atoms in all numeric expressions -->
-    <sch:rule context="istar-t:atom[ancestor::istar-t:quality or ancestor::istar-t:add or ancestor::istar-t:subtract or
+    <sch:rule context="istar-t:numAtom[ancestor::istar-t:quality or ancestor::istar-t:add or ancestor::istar-t:subtract or
                                     ancestor::istar-t:multiply or ancestor::istar-t:divide or ancestor::istar-t:negate]">
       <sch:let name="actor" value="ancestor::istar-t:actor"/>
       <sch:let name="numAtom" value="normalize-space(.)"/>
@@ -235,7 +235,7 @@
     </sch:rule>
 
     <!-- Check atoms referenced inside a previous element in numeric expressions -->
-    <sch:rule context="istar-t:previous/istar-t:atom[ancestor::istar-t:quality or ancestor::istar-t:add or ancestor::istar-t:subtract or
+    <sch:rule context="istar-t:previous/istar-t:numAtom[ancestor::istar-t:quality or ancestor::istar-t:add or ancestor::istar-t:subtract or
                                                     ancestor::istar-t:multiply or ancestor::istar-t:divide or ancestor::istar-t:negate]">
       <sch:let name="actor" value="ancestor::istar-t:actor"/>
       <sch:let name="numAtom" value="normalize-space(.)"/>

@@ -62,16 +62,10 @@
     -->
     <preBoxes>
         <preBox name="materialAvailable" description="Material availability in stock">
-            <and>
-                <previous>
-                    <atom>test</atom>
-                </previous>
-                <gt>
-                    <left>5</left>
-                    <right>2</right>
-                </gt>
-                <atom>testing</atom>
-            </and>
+            <gt>
+                <left><const>4</const></left>
+                <right><const>5</const></right>
+            </gt>
         </preBox>
 
         <preBox name="hasManufacturingCapacity" description="Manufacturer has capacity to build in-house">
@@ -84,25 +78,31 @@
     -->
     <qualities>
         <quality name="Reputation" description="Reputation of the Manufacturer" exported="false">
-            <value>
-                5
-            </value>
+            <add>
+                <const>5</const>
+                <const>1</const>
+                <subtract>
+                    <left>
+                        <const>5</const>
+                    </left>
+                    <right>
+                        <const>1</const>
+                    </right>
+                </subtract>
+            </add>
         </quality>
 
         <quality name="FinancialGain" description="Financial Gain" exported="false">
-            <value>
-                5
-            </value>
+            <const>1</const>
         </quality>
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
-            <value>
-                Reputation + FinancialGain
-            </value>
+            <add>
+                <numAtom>Reputation</numAtom>
+                <numAtom>FinancialGain</numAtom>
+            </add>
         </quality>
     </qualities>
-
-
 
     <!-- Validation
             1. childGoal/childTask should be defined

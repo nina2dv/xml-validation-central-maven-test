@@ -116,29 +116,34 @@
         </xsd:sequence>
     </xsd:complexType>
 
-
-
     <xsd:group name="BooleanExpressionElements">
         <xsd:choice>
             <xsd:element name="boolConst" type="BoolConstType"/>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="boolAtom" type="xsd:string"/>
             <xsd:element name="previous" type="PreviousType"/>
+
             <xsd:element name="gt" type="NumericComparisonType"/>
+            <xsd:element name="gte" type="NumericComparisonType"/>
+
             <xsd:element name="lt" type="NumericComparisonType"/>
+            <xsd:element name="lte" type="NumericComparisonType"/>
+
             <xsd:element name="eq" type="NumericComparisonType"/>
+            <xsd:element name="neq" type="NumericComparisonType"/>
+
             <xsd:element name="and" type="BooleanAndType"/>
             <xsd:element name="or" type="BooleanOrType"/>
             <xsd:element name="not" type="BooleanNotType"/>
         </xsd:choice>
     </xsd:group>
 
-    <!-- Updated BooleanExpressionType.
+    <!-- BooleanExpressionType.
          This type now forces a structured XML syntax (no free text)
          and allows the following alternatives:
            • A boolean constant (<boolConst>),
            • A boolean identifier (<atom>),
            • A previous() function call (<previous>),
-           • A numeric comparison (<gt>, <lt>, or <eq>),
+           • A numeric comparison (<gt>, <lt>, <eq>, etc),
            • Or combinations via logical operators (<and>, <or>, <not>).
     -->
     <xsd:complexType name="BooleanExpressionType">
@@ -149,7 +154,7 @@
                 • A boolean constant: boolConst (true or false)
                 • A boolean identifier: atom (goal, task, or predicate identifier)
                 • A previous call: previous wrapping an atom
-                • A numeric comparison: one of gt, lt, or eq (each with left/right numeric expressions)
+                • A numeric comparison: one of gt, gte, lt, lte, eq, or neq (each with left/right numeric expressions)
                 • Or a combination of boolean expressions using:
                 and (conjunction), or (disjunction), and not (negation).
             </xsd:documentation>
@@ -180,7 +185,93 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="atom" type="xsd:string"/>
+            <xsd:element name="boolAtom" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- ===== Numeric Expression Type Structure ===== -->
+    <!-- Define a group for numeric expression elements -->
+    <xsd:group name="NumericExpressionElements">
+        <xsd:choice>
+            <xsd:element name="const" type="xsd:decimal"/>
+            <xsd:element name="numAtom" type="xsd:string"/>
+            <xsd:element name="previous" type="NumericPreviousType"/>
+            <xsd:element name="add" type="NumericNaryOpType"/>
+            <xsd:element name="subtract" type="NumericBinaryOpType"/>
+            <xsd:element name="multiply" type="NumericNaryOpType"/>
+            <xsd:element name="divide" type="NumericBinaryOpType"/>
+            <xsd:element name="negate" type="NumericUnaryOpType"/>
+        </xsd:choice>
+    </xsd:group>
+
+    <!-- Numeric expression type that uses the group -->
+    <xsd:complexType name="NumericExpressionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A numeric expression is defined recursively as follows:
+                • A numeric constant: const (e.g., 5, 10.5)
+                • A numeric identifier: atom (references a quality)
+                • A previous call: previous wrapping an atom (for historical values)
+                • Arithmetic operations: add, subtract, multiply, divide
+                • Unary negation: negate (for negative values)
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="NumericExpressionElements"/>
+    </xsd:complexType>
+
+    <!-- Numeric Previous Type for quality references -->
+    <xsd:complexType name="NumericPreviousType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a previous value reference for a numeric value. For example,
+                previous(quality_identifier) is modeled as:
+                &lt;previous&gt;&lt;atom&gt;quality_identifier&lt;/atom&gt;&lt;/previous&gt;
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="numAtom" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Numeric Binary Operations (subtract, divide) -->
+    <xsd:complexType name="NumericBinaryOpType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a binary arithmetic operation (subtract, divide)
+                with exactly two operands (left and right) that are themselves numeric expressions.
+                The order of operands matters for these non-commutative operations.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="left" type="NumericExpressionType"/>
+            <xsd:element name="right" type="NumericExpressionType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Numeric N-ary Operations (add, multiply) -->
+    <xsd:complexType name="NumericNaryOpType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents an n-ary arithmetic operation (add, multiply)
+                with two or more operands that are themselves numeric expressions.
+                These operations are commutative and associative, allowing any number of operands.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="NumericExpressionElements" minOccurs="2" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Numeric Unary Operation (negate) -->
+    <xsd:complexType name="NumericUnaryOpType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a unary arithmetic operation (negate)
+                with one operand that is itself a numeric expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="NumericExpressionElements" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -296,7 +387,7 @@
             ]]></xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="formula" type="xsd:string" minOccurs="0" maxOccurs="1">
+            <xsd:element name="formula" type="NumericExpressionType" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
                         Element: formula
@@ -326,35 +417,8 @@
         </xsd:attribute>
     </xsd:complexType>
 
-    <!-- Numeric expression for quality values -->
-    <!--
-      This simple type allows only numeric constants (with optional decimals)
-      and identifiers (for predicates/qualities) combined with the operators
-      +, -, *, / and parentheses. (Whitespace is allowed.)
-      NOTE: This pattern only restricts the allowed characters; it does not
-            verify that parentheses are balanced or that the expression is
-            syntactically correct. Further validation (or use of Schematron)
-            would be needed to enforce those rules.
-    -->
-    <xsd:simpleType name="NumericExpressionType">
-        <xsd:annotation>
-            <xsd:documentation>
-                Numeric expressions must be built only from:
-                - numeric constants (e.g. 3, 4.56),
-                - identifiers (which must refer to a declared predicate or quality),
-                - the operators +, -, *, /,
-                - and parentheses (which may be nested).
-                (Additional validation is required to ensure that each identifier corresponds
-                to a declared atom.)
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:restriction base="xsd:string">
-            <xsd:pattern value="[\s0-9A-Za-z_+\-*/().]+"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-
     <!-- ===== Qualities ===== -->
-    <!-- Removes the old <contributesTo>; all numeric expressions are in the <value> directly -->
+    <!-- Modified to use the new NumericExpressionType -->
     <xsd:complexType name="QualitiesType">
         <xsd:annotation>
             <xsd:documentation><![CDATA[
@@ -382,28 +446,23 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <!-- Modified QualityType so that its <value> element uses NumericExpressionType -->
+    <!-- Modified QualityType to use NumericExpressionType directly -->
     <xsd:complexType name="QualityType">
         <xsd:annotation>
             <xsd:documentation>
-                Numeric quality attribute. The value element now must contain a numeric expression
-                that uses only numeric constants, identifiers (declared predicates or qualities),
-                the operators +, -, *, / and parentheses (which may be nested).
+                Numeric quality attribute with a structured value representation.
+                The quality now directly extends NumericExpressionType to contain a structured
+                numeric expression rather than a string-based formula.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:sequence>
-            <xsd:element name="value" type="NumericExpressionType" minOccurs="0" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Contains the numeric expression representing the quality's value.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-        </xsd:sequence>
-        <xsd:attribute name="name" type="xsd:string" use="required"/>
-        <xsd:attribute name="description" type="xsd:string" use="optional"/>
-        <xsd:attribute name="exported" type="xsd:boolean" use="optional" default="false"/>
-        <xsd:attribute name="root" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:complexContent>
+            <xsd:extension base="NumericExpressionType">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="description" type="xsd:string" use="optional"/>
+                <xsd:attribute name="exported" type="xsd:boolean" use="optional" default="false"/>
+                <xsd:attribute name="root" type="xsd:boolean" use="optional" default="false"/>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 
     <!-- ===== Goals ===== -->

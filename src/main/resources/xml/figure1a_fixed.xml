@@ -62,16 +62,10 @@
     -->
     <preBoxes>
         <preBox name="materialAvailable" description="Material availability in stock">
-            <and>
-                <previous>
-                    <boolAtom>test</boolAtom>
-                </previous>
-                <gt>
-                    <left><const>4</const></left>
-                    <right><const>5</const></right>
-                </gt>
-                <boolAtom>testing</boolAtom>
-            </and>
+            <gt>
+                <left><const>4</const></left>
+                <right><const>5</const></right>
+            </gt>
         </preBox>
 
         <preBox name="hasManufacturingCapacity" description="Manufacturer has capacity to build in-house">

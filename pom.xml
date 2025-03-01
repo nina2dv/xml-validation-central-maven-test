@@ -9,7 +9,69 @@
     <packaging>jar</packaging>
 
     <name>XML Validator</name>
-    <description>Validate XML against XSD and Schematron</description>
+    <description>
+        <![CDATA[
+Validate XML against XSD and Schematron
+
+---
+## JAR
+java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
+
+## Pull Package
+Add this to pom.xml:
+<properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<dependencies>
+    <dependency>
+        <groupId>io.github.nina2dv</groupId>
+        <artifactId>xml-validation</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <configuration>
+                <mainClass>org.example.MyValidatorApp</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+Example java project:
+package org.example;
+
+import com.example.validation.XsdValidator;
+import com.example.validation.ValidationResult;
+
+public class MyValidatorApp {
+    public static void main(String[] args) {
+        try {
+            ValidationResult result = XsdValidator.validateXMLSchema("path/to/schema.xsd", "path/to/file.xml");
+            if (result.isValid()) {
+                System.out.println("XML is valid!");
+            } else {
+                System.err.println("XML is not valid: " + result.getErrors());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+
+mvn compile exec:java
+# Or
+mvn compile exec:java -Dexec.args="path/to/schema.xsd path/to/file.xml"
+    ]]>
+    </description>
     <url>https://github.com/nina2dv/xml-istar-rl</url>
 
     <properties>

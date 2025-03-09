@@ -18,12 +18,24 @@ public class Goal extends DecompositionElement {
     @XmlElement(name = "refinement", namespace = "https://example.org/istar-t")
     private Refinement refinement;
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public int getRuns() { return runs; }
-    public void setRuns(int runs) { this.runs = runs; }
-    public Refinement getRefinement() { return refinement; }
-    public void setRefinement(Refinement refinement) { this.refinement = refinement; }
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public int getRuns() {
+        return runs;
+    }
+    public void setRuns(int runs) {
+        this.runs = runs;
+    }
+    public Refinement getRefinement() {
+        return refinement;
+    }
+    public void setRefinement(Refinement refinement) {
+        this.refinement = refinement;
+    }
 
     @Override
     public boolean isRoot() {

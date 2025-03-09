@@ -446,24 +446,28 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <!-- Modified QualityType to use NumericExpressionType directly -->
     <xsd:complexType name="QualityType">
         <xsd:annotation>
             <xsd:documentation>
                 Numeric quality attribute with a structured value representation.
-                The quality now directly extends NumericExpressionType to contain a structured
-                numeric expression rather than a string-based formula.
+                The quality now contains a formula element which holds the numeric expression.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:complexContent>
-            <xsd:extension base="NumericExpressionType">
-                <xsd:attribute name="name" type="xsd:string" use="required"/>
-                <xsd:attribute name="description" type="xsd:string" use="optional"/>
-                <xsd:attribute name="exported" type="xsd:boolean" use="optional" default="false"/>
-                <xsd:attribute name="root" type="xsd:boolean" use="optional" default="false"/>
-            </xsd:extension>
-        </xsd:complexContent>
+        <xsd:sequence>
+            <xsd:element name="formula" type="NumericExpressionType" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines the formula representing the quality.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="description" type="xsd:string" use="optional"/>
+        <xsd:attribute name="exported" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="root" type="xsd:boolean" use="optional" default="false"/>
     </xsd:complexType>
+
 
     <!-- ===== Goals ===== -->
     <!-- Allows <pre> or <npr> as direct children, then an optional <refinement> -->

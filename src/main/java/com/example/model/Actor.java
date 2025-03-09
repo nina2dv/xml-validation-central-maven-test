@@ -3,14 +3,14 @@ package com.example.model;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "actor", namespace = "https://example.org/istar-t")
-public class Actor {
+public class Actor extends Element {
     @XmlAttribute(name = "name")
     private String name;
 
@@ -34,6 +34,10 @@ public class Actor {
     @XmlElement(name = "task", namespace = "https://example.org/istar-t")
     private List<Task> tasks;
 
+    @XmlElementWrapper(name = "indirectEffects", namespace = "https://example.org/istar-t")
+    @XmlElement(name = "indirectEffect", namespace = "https://example.org/istar-t")
+    private List<IndirectEffect> indirectEffects;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public List<Predicate> getPredicates() { return predicates; }
@@ -47,31 +51,29 @@ public class Actor {
     public List<Task> getTasks() { return tasks; }
     public void setTasks(List<Task> tasks) { this.tasks = tasks; }
 
-    // Convenience method: return a root element built from the first goal with no parent.
-    public Element getRoot() {
-        if (goals != null) {
-            for (Goal g : goals) {
-                if (g.isRoot()) {
-                    Element e = new Element();
-                    Atom atom = new Atom();
-                    atom.setTitleText(g.getId());
-                    e.setRepresentation(atom);
-                    return e;
-                }
-            }
-        }
-        return null;
-    }
-
+    public List<IndirectEffect> getIndirectEffects() { return indirectEffects; }
+    public void setIndirectEffects(List<IndirectEffect> indirectEffects) { this.indirectEffects = indirectEffects; }
     @Override
     public String toString() {
         return "Actor{" +
                 "name='" + name + '\'' +
+                "\n------------------\n" +
                 ", predicates=" + predicates +
+                "\n------------------\n" +
+
                 ", preBoxes=" + preBoxes +
+                "\n------------------\n" +
+
                 ", qualities=" + qualities +
+                "\n------------------\n" +
+
                 ", goals=" + goals +
+                "\n------------------\n" +
+
                 ", tasks=" + tasks +
+                "\n------------------\n" +
+
+                ", indirectEffects=" + indirectEffects +
                 '}';
     }
 }

@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "preBox", namespace = "https://example.org/istar-t")
-public class PreBox implements Formula {
+public class PreBox extends NonDecompositionElement{
     @XmlAttribute
     private String name;
     @XmlAttribute
@@ -18,17 +18,29 @@ public class PreBox implements Formula {
     @XmlAnyElement(lax = true)
     private Object expression;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
     @XmlTransient
-    public Object getExpression() { return expression; }
-    public void setExpression(Object expression) { this.expression = expression; }
+    public Object getExpression() {
+        return expression;
+    }
+    public void setExpression(Object expression) {
+        this.expression = expression;
+    }
 
     @Override
-    public String getFormula() {
-        return expression != null ? expression.toString() : "";
+    public Formula getFormula() {
+        return new SimpleFormula(expression != null ? expression.toString() : "");
     }
 
     @Override
@@ -36,7 +48,7 @@ public class PreBox implements Formula {
         return "PreBox{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", formula='" + getFormula() + '\'' +
+                ", formula=" + getFormula() +
                 '}';
     }
 }

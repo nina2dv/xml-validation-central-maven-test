@@ -1,6 +1,12 @@
 package com.example.model;
 
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public class NonDecompositionElement extends Element {
+    @XmlJavaTypeAdapter(FormulaAdapter.class)
     private Formula valueFormula;
     private Atom atom;
     private boolean previous;
@@ -22,5 +28,16 @@ public class NonDecompositionElement extends Element {
     }
     public void setPrevious(boolean previous) {
         this.previous = previous;
+    }
+
+    @Override
+    public String toString() {
+        return "NonDecompositionElement{" +
+                "id='" + id + '\'' +
+                ", representation=" + representation +
+                ", valueFormula=" + valueFormula +
+                ", atom=" + atom +
+                ", previous=" + previous +
+                '}';
     }
 }

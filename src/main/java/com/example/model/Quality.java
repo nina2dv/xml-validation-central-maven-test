@@ -8,11 +8,12 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "quality", namespace = "https://example.org/istar-t")
-public class Quality extends Element {
+public class Quality extends NonDecompositionElement {
     @XmlElement(name="formula")
     @XmlJavaTypeAdapter(FormulaAdapter.class)
     private Formula formula;
 
+    @Override
     public Formula getFormula() {
         return formula;
     }

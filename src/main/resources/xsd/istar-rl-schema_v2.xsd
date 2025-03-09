@@ -454,7 +454,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="formula" type="NumericExpressionType" minOccurs="0" maxOccurs="1">
+            <xsd:element name="formula" type="NumericExpressionType" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>
                         Defines the formula representing the quality.

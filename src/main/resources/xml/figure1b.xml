@@ -43,23 +43,41 @@
 
     <qualities>
         <quality name="ReachIdealTemperature" exported="true" description="Reach Ideal Temperature">
-            <value>previous(ReachIdealTemperature) + 1.0</value> <!--f2-->
+            <formula>
+                <add>
+                    <previous>
+                        <numAtom>ReachIdealTemperature</numAtom>
+                    </previous>
+                    <const>1</const>
+                </add>
+            </formula>
         </quality>
 
         <quality name="MaximizeComfort" description="Maximize Comfort" exported="false">
-            <value>f5</value> <!-- a string -->
+            <formula>
+                <numAtom>f5</numAtom>
+            </formula>
         </quality>
 
         <quality name="MinimizeCost" description="Minimize Cost" exported="false">
-            <value>f4</value>
+            <formula>
+                <numAtom>f4</numAtom>
+            </formula>
         </quality>
 
         <quality name="MinimizeRunningTime" description="Minimize Running Time" exported="false">
-            <value>f3</value>
+            <formula>
+                <numAtom>f3</numAtom>
+            </formula>
         </quality>
 
         <quality name="TotalValue" root="true" exported="false" description="Total Value">
-            <value>0.2 + 0.8 + ...</value>
+            <formula>
+                <add>
+                    <const>0.2</const>
+                    <const>0.8</const>
+                </add>
+            </formula>
         </quality>
     </qualities>
 

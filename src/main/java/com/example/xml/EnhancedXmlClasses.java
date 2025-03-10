@@ -5,7 +5,6 @@ import java.util.List;
 
 /**
  * Enhanced XML binding classes for the iStar-T XML schema
- * With improved support for preBox, quality, and indirectEffect elements
  */
 public class EnhancedXmlClasses {
 

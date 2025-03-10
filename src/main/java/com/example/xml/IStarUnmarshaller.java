@@ -9,9 +9,7 @@ import java.io.InputStream;
 import java.io.File;
 import java.util.*;
 
-/**
- * Updated unmarshaller that adds Qualities to the Environment
- */
+
 public class IStarUnmarshaller {
 
     public Model unmarshalToModel(InputStream xmlStream) throws JAXBException {

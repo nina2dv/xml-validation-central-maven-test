@@ -186,7 +186,7 @@ mvn compile exec:java -Dexec.args="path/to/schema.xsd path/to/file.xml"
                 </executions>
                 <configuration>
 <!--                    <mainClass>com.example.model.UnmarshalExample</mainClass>-->
-                    <mainClass>com.example.IStarTApplication</mainClass>
+                    <mainClass>com.example.IStarTApplication2</mainClass>
                 </configuration>
             </plugin>
 

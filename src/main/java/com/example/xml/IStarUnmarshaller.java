@@ -13,7 +13,7 @@ import java.util.*;
 public class IStarUnmarshaller {
 
     public Model unmarshalToModel(InputStream xmlStream) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(Model.class);
+        JAXBContext context = JAXBContext.newInstance(ActorXml.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         return (Model) unmarshaller.unmarshal(xmlStream);
     }

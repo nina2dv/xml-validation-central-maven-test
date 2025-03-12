@@ -155,7 +155,8 @@ public class SchematronValidator {
         // Apply the compiled XSLT to the XML document.
         String svrl = applySchematronValidation(compiledXSLT, xmlPath);
 
-         System.out.println("SVRL Output: " + svrl);
+        //// Debug purposes
+        // System.out.println("SVRL Output: " + svrl);
 
         // Parse the SVRL and return the validation results.
         return parseSVRL(svrl);

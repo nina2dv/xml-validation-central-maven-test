@@ -78,29 +78,36 @@
     -->
     <qualities>
         <quality name="Reputation" description="Reputation of the Manufacturer" exported="false">
-            <add>
-                <const>5</const>
-                <const>1</const>
-                <subtract>
-                    <left>
-                        <const>5</const>
-                    </left>
-                    <right>
-                        <const>1</const>
-                    </right>
-                </subtract>
-            </add>
+            <formula>
+                <add>
+                    <const>5</const>
+                    <const>1</const>
+                    <subtract>
+                        <left>
+                            <const>5</const>
+                        </left>
+                        <right>
+                            <const>1</const>
+                        </right>
+                    </subtract>
+                </add>
+            </formula>
+
         </quality>
 
         <quality name="FinancialGain" description="Financial Gain" exported="false">
-            <const>1</const>
+            <formula>
+                <const>1</const>
+            </formula>
         </quality>
 
         <quality name="TotalValue" root="true" description="Overall Value" exported="false">
-            <add>
-                <numAtom>Reputation</numAtom>
-                <numAtom>FinancialGain</numAtom>
-            </add>
+            <formula>
+                <add>
+                    <numAtom>Reputation</numAtom>
+                    <numAtom>FinancialGain</numAtom>
+                </add>
+            </formula>
         </quality>
     </qualities>
 

@@ -1,9 +1,7 @@
 package com.example;
 
-import com.example.validation.SchematronValidator;
-import com.example.validation.XsdValidator;
+import com.example.validation.XmlValidationService;
 import com.example.validation.ValidationResult;
-import com.example.validation.Result;
 
 /**
  * Utility class to run XML validators based on the specified type.
@@ -13,12 +11,7 @@ import com.example.validation.Result;
  * </p>
  */
 public class XmlValidatorRunner {
-    /**
-     * Main method to execute the XML validation.
-     *
-     * @param args command-line arguments: validator-type, schema-file, xml-file.
-     * @throws Exception if an error occurs during validation.
-     */
+
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("Usage: XmlValidatorRunner <validator-type> <schema-file> <xml-file>");
@@ -30,17 +23,8 @@ public class XmlValidatorRunner {
         String schemaPath = args[1];
         String xmlPath = args[2];
 
-        ValidationResult result;
-        switch (validatorType.toLowerCase()) {
-            case "xsd":
-                result = XsdValidator.validateXMLSchema(schemaPath, xmlPath);
-                break;
-            case "schematron":
-                result = SchematronValidator.validateSchematron(schemaPath, xmlPath);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown validator type: " + validatorType);
-        }
+        XmlValidationService service = new XmlValidationService();
+        ValidationResult result = service.validate(validatorType, schemaPath, xmlPath);
 
         if (!result.isValid()) {
             StringBuilder errorMsg = new StringBuilder();

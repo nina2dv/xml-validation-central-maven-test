@@ -39,7 +39,7 @@ mvn verify -P all-validation \
 ```
 
 ## JAR
-```bash
+```
 java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
 ```
 
@@ -73,6 +73,18 @@ Add this to pom.xml:
     </plugins>
 </build>
 ```
+
+Add GitHub username and PAT in `settings.xml`:
+```xml
+<username>GITHUB_USERNAME</username>
+<password>GITHUB_PERSONAL_ACCESS_TOKEN</password>
+```
+
+Run below:
+```
+mvn install -s settings.xml
+```
+
 Example java project:
 ```java
 package org.example;
@@ -95,10 +107,8 @@ public class MyValidatorApp {
     }
 }
 ```
-```bash
+```
 mvn compile exec:java
-# Or
-mvn compile exec:java -Dexec.args="path/to/schema.xsd path/to/file.xml"
 ```
 ---
 

@@ -15,11 +15,13 @@ Validate XML against XSD and Schematron
 
 ---
 ## JAR
-```java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml```
+```
+java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
+```
 
 ## Pull Package
 Add this to pom.xml:
-```
+```xml
 <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
@@ -48,8 +50,19 @@ Add this to pom.xml:
 </build>
 ```
 
-Example java project:
+Add GitHub username and PAT in `settings.xml`:
+```xml
+<username>GITHUB_USERNAME</username>
+<password>GITHUB_PERSONAL_ACCESS_TOKEN</password>
 ```
+
+Run below:
+```
+mvn install -s settings.xml
+```
+
+Example java project:
+```java
 package org.example;
 
 import com.example.validation.XsdValidator;
@@ -72,8 +85,6 @@ public class MyValidatorApp {
 ```
 ```
 mvn compile exec:java
-# Or
-mvn compile exec:java -Dexec.args="path/to/schema.xsd path/to/file.xml"
 ```
     ]]>
     </description>

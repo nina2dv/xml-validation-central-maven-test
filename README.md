@@ -86,11 +86,12 @@ mvn install -s settings.xml
 ```
 
 Example java project:
+
 ```java
 package org.example;
-        
-import com.example.validation.XsdValidator;
-import com.example.validation.ValidationResult;
+
+import validation.io.github.nina2dv.XsdValidator;
+import validation.io.github.nina2dv.ValidationResult;
 
 public class MyValidatorApp {
     public static void main(String[] args) {

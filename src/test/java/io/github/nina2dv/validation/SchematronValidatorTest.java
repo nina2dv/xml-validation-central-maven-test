@@ -1,4 +1,4 @@
-package com.example.validation;
+package io.github.nina2dv.validation;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

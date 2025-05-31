@@ -1,8 +1,8 @@
-package com.example;
+package io.github.nina2dv.xmlvalidation.cli;
 
-import com.example.validation.SchematronValidator;
-import com.example.validation.ValidationResult;
-import com.example.validation.XsdValidator;
+import io.github.nina2dv.xmlvalidation.SchematronValidator;
+import io.github.nina2dv.xmlvalidation.ValidationResult;
+import io.github.nina2dv.xmlvalidation.XsdValidator;
 import java.io.File;
 
 /**

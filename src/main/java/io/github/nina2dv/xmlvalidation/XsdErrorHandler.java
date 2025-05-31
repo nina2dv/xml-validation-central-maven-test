@@ -1,4 +1,4 @@
-package com.example.validation;
+package io.github.nina2dv.xmlvalidation;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;

@@ -88,7 +88,7 @@ mvn compile exec:java
 ```
     ]]>
     </description>
-    <url>https://github.com/nina2dv/xml-istar-rl</url>
+    <url>https://github.com/nina2dv/xml-validation</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -187,7 +187,7 @@ mvn compile exec:java
                             <!-- Merge common resource files -->
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.example.XmlValidationCli</mainClass>
+                                    <mainClass>io.github.nina2dv.xmlvalidation.cli.XmlValidationCli</mainClass>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/DEPENDENCIES</resource>
@@ -212,7 +212,7 @@ mvn compile exec:java
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/nina2dv/xml-istar-rl</url>
+            <url>https://maven.pkg.github.com/nina2dv/xml-validation</url>
         </repository>
     </distributionManagement>
 
@@ -235,7 +235,7 @@ mvn compile exec:java
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
+                                    <mainClass>io.github.nina2dv.xmlvalidation.cli.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>xsd</argument>
                                         <argument>${argument.xsdFile}</argument>
@@ -266,7 +266,7 @@ mvn compile exec:java
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
+                                    <mainClass>io.github.nina2dv.xmlvalidation.cli.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>schematron</argument>
                                         <argument>${argument.schematronFile}</argument>
@@ -298,7 +298,7 @@ mvn compile exec:java
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
+                                    <mainClass>io.github.nina2dv.xmlvalidation.cli.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>xsd</argument>
                                         <argument>${argument.xsdFile}</argument>
@@ -314,7 +314,7 @@ mvn compile exec:java
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.example.XmlValidatorRunner</mainClass>
+                                    <mainClass>io.github.nina2dv.xmlvalidation.cli.XmlValidatorRunner</mainClass>
                                     <arguments>
                                         <argument>schematron</argument>
                                         <argument>${argument.schematronFile}</argument>

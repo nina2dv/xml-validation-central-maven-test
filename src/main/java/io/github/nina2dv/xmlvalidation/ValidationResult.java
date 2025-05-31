@@ -1,4 +1,4 @@
-package com.example.validation;
+package io.github.nina2dv.xmlvalidation;
 
 import java.util.ArrayList;
 import java.util.Collections;

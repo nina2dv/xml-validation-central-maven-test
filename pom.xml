@@ -4,91 +4,35 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.nina2dv</groupId>
-    <artifactId>xml-validation</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <artifactId>xml-validation-central-maven-test</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>XML Validator</name>
-    <description>
-        <![CDATA[
-Validate XML against XSD and Schematron
+    <description>Validates XML against XSD and Schematron</description>
+    <url>https://github.com/nina2dv/xml-validation-central-maven-test</url>
 
----
-## JAR
-```
-java -jar xml-validation-X.X.X.jar ./src/main/resources/xsd/istar-rl-schema.xsd ./src/main/resources/schematron/istar-rl-schematron.sch ./src/main/resources/xml/figure1a.xml
-```
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
 
-## Pull Package
-Add this to pom.xml:
-```xml
-<properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-</properties>
 
-<dependencies>
-    <dependency>
-        <groupId>io.github.nina2dv</groupId>
-        <artifactId>xml-validation</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-</dependencies>
+    <developers>
+        <developer>
+            <name>Nina</name>
+            <url>https://github.com/nina2dv</url>
+        </developer>
+    </developers>
 
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.1.0</version>
-            <configuration>
-                <mainClass>org.example.MyValidatorApp</mainClass>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
-```
+    <scm>
+        <connection>scm:git:https://github.com/nina2dv/xml-validation-central-maven-test.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/nina2dv/xml-validation-central-maven-test.git</developerConnection>
+        <url>https://github.com/nina2dv/xml-validation-central-maven-test</url>
+    </scm>
 
-Add GitHub username and PAT in `settings.xml`:
-```xml
-<username>GITHUB_USERNAME</username>
-<password>GITHUB_PERSONAL_ACCESS_TOKEN</password>
-```
-
-Run below:
-```
-mvn install -s settings.xml
-```
-
-Example java project:
-```java
-package org.example;
-
-import com.example.validation.XsdValidator;
-import com.example.validation.ValidationResult;
-
-public class MyValidatorApp {
-    public static void main(String[] args) {
-        try {
-            ValidationResult result = XsdValidator.validateXMLSchema("path/to/schema.xsd", "path/to/file.xml");
-            if (result.isValid()) {
-                System.out.println("XML is valid!");
-            } else {
-                System.err.println("XML is not valid: " + result.getErrors());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-}
-```
-```
-mvn compile exec:java
-```
-    ]]>
-    </description>
-    <url>https://github.com/nina2dv/xml-validation</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -203,18 +147,89 @@ mvn compile exec:java
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Sources Jar -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase> <!-- Run before 'install'/'deploy' so jars exist -->
+                        <goals>
+                            <goal>jar-no-fork</goal> <!-- Create *-sources.jar without re-running lifecycle -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JavaDoc Jar -->
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId> <!-- Generates API docs -->
+                <version>3.11.1</version>
+                <configuration>
+                    <!-- Javadoc strictness: allow all checks except 'missing' to avoid failures for sparse docs -->
+                    <doclint>all,-missing</doclint>
+                    <!-- (Optional) <failOnError>false</failOnError> to never fail the build on javadoc errors -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase> <!-- Build docs jar alongside main jar -->
+                        <goals>
+                            <goal>jar</goal> <!-- Create *-javadoc.jar and attach to the project -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+            <!-- Sign all artifacts (main JAR, sources, javadoc, shaded JAR, POM) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <configuration>
+                    <keyname>${gpg.keyname}</keyname>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg><arg>loopback</arg>
+                    </gpgArguments>
+                    <!-- On Windows, add: <executable>gpg.exe</executable> -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals><goal>sign</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- Must match the <server><id>... in settings.xml -->
+                    <publishingServerId>central</publishingServerId>
+
+                    <!-- Auto-release on success (no manual click in the portal) -->
+                    <autoPublish>true</autoPublish>
+
+                    <!-- Optional: block until the artifact is published (nice in CI) -->
+                     <waitUntil>published</waitUntil>
+                </configuration>
+            </plugin>
+
         </plugins>
+
+
+
     </build>
-
-
-    <!-- Distribution Management for GitHub Packages -->
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/nina2dv/xml-validation</url>
-        </repository>
-    </distributionManagement>
 
     <!-- Maven Profiles for running validations individually -->
     <profiles>

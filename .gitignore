@@ -3,6 +3,8 @@ target/
 .idea/
 
 
+secret.xml
+
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 

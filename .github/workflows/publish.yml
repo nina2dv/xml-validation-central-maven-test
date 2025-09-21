@@ -34,23 +34,20 @@ jobs:
           server-username: ${{ secrets.CENTRAL_USERNAME }}
           server-password: ${{ secrets.CENTRAL_PASSWORD }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase:  ${{ secrets.GPG_PASSPHRASE }}
 
-
-      - name: Inspect Maven settings (redacted)
-        run: |
-          echo "== ~/.m2/settings.xml =="
-          sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
-
-      - name: Verify Central token (Bearer)
-        env:
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
-        run: |
-          TOK=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0 || printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64)
-          # A 'status' call needs an id, so we intentionally call a harmless endpoint that still checks auth:
-          curl -sS -I -H "Authorization: Bearer $TOK" https://central.sonatype.com/api/v1/publisher/status || true
-
+#      - name: Inspect Maven settings (redacted)
+#        run: |
+#          echo "== ~/.m2/settings.xml =="
+#          sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
+#
+#      - name: Verify Central token (Bearer)
+#        env:
+#          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+#          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+#        run: |
+#          TOK=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0 || printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64)
+#          # A 'status' call needs an id, so we intentionally call a harmless endpoint that still checks auth:
+#          curl -sS -I -H "Authorization: Bearer $TOK" https://central.sonatype.com/api/v1/publisher/status || true
 
       - name: GPG can sign non-interactively
         env:

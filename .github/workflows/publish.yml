@@ -36,6 +36,12 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase:  ${{ secrets.GPG_PASSPHRASE }}
 
+
+      - name: Inspect Maven settings (redacted)
+        run: |
+          echo "== ~/.m2/settings.xml =="
+          sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
+
       - name: Verify Central token (Bearer)
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}

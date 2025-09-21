@@ -1,11 +1,11 @@
 name: publish artifacts
 on:
   push:
-    tags: ['v*']           # tag format: v1.2.3
-  workflow_dispatch: {}     # allow manual run if needed
+    tags: ['v*']            # tag format: v1.2.3
+  workflow_dispatch: {}
 
 permissions:
-  contents: write           # required if you create a GitHub Release below
+  contents: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -30,33 +30,26 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+          # Write placeholders that reference env vars (resolved at mvn run time)
           server-id: central
-          server-username: ${{ secrets.CENTRAL_USERNAME }}
-          server-password: ${{ secrets.CENTRAL_PASSWORD }}
+          server-username: MAVEN_USERNAME         # <-- placeholder
+          server-password: MAVEN_CENTRAL_TOKEN    # <-- placeholder
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE    # <-- placeholder
 
-#      - name: Inspect Maven settings (redacted)
-#        run: |
-#          echo "== ~/.m2/settings.xml =="
-#          sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
-#
-#      - name: Verify Central token (Bearer)
-#        env:
-#          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-#          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
-#        run: |
-#          TOK=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0 || printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64)
-#          # A 'status' call needs an id, so we intentionally call a harmless endpoint that still checks auth:
-#          curl -sS -I -H "Authorization: Bearer $TOK" https://central.sonatype.com/api/v1/publisher/status || true
+      # Optional sanity check (redacted)
+      # - name: Inspect Maven settings (redacted)
+      #   run: |
+      #     sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
 
       - name: GPG can sign non-interactively
         env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}   # must match placeholder above
         run: |
           gpg --list-secret-keys --keyid-format LONG
           echo ok > /tmp/t.txt
           gpg --batch --yes --pinentry-mode loopback \
-              --passphrase "$GPG_PASSPHRASE" -ab /tmp/t.txt
+            --passphrase "$MAVEN_GPG_PASSPHRASE" -ab /tmp/t.txt
 
       - name: Set POM version from tag
         run: mvn -B -ntp versions:set -DnewVersion=${{ steps.v.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules=true
@@ -67,15 +60,16 @@ jobs:
           if [[ "$VER" == *-SNAPSHOT ]]; then echo "SNAPSHOT not allowed in release"; exit 1; fi
 
       - name: Build, sign, and publish
+        # Provide env vars that the settings.xml placeholders will read
         env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_USERNAME:         ${{ secrets.CENTRAL_USERNAME }}        # Central User Token username
+          MAVEN_CENTRAL_TOKEN:    ${{ secrets.CENTRAL_PASSWORD }}        # Central User Token password
+          MAVEN_GPG_PASSPHRASE:   ${{ secrets.GPG_PASSPHRASE }}          # GPG passphrase
         run: |
           mvn -Pdeployment -B -ntp \
-            -Dgpg.keyname=${{ secrets.GPG_KEY_FPR }} \
+            -Dgpg.keyname='${{ secrets.GPG_KEY_FPR }}' \
             clean deploy
-      
 
-      # (Optional) Create a GitHub Release page for convenience
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

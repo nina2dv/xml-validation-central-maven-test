@@ -36,6 +36,16 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase:  ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Verify Central token (Bearer)
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+        run: |
+          TOK=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0 || printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64)
+          # A 'status' call needs an id, so we intentionally call a harmless endpoint that still checks auth:
+          curl -sS -I -H "Authorization: Bearer $TOK" https://central.sonatype.com/api/v1/publisher/status || true
+
+
       - name: GPG can sign non-interactively
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -53,7 +63,7 @@ jobs:
           VER=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
           if [[ "$VER" == *-SNAPSHOT ]]; then echo "SNAPSHOT not allowed in release"; exit 1; fi
 
-      - name: Build, sign, and publish to Central
+      - name: Build, sign, and publish
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |

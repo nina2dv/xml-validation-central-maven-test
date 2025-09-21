@@ -70,9 +70,45 @@ jobs:
             -Dgpg.keyname='${{ secrets.GPG_KEY_FPR }}' \
             clean deploy
 
+      - name: Collect release assets
+        run: |
+          mkdir -p release-assets
+          cp target/*-sources.jar release-assets/ || true
+          cp target/*-javadoc.jar release-assets/ || true
+          cp target/*.jar release-assets/
+          # Checksums
+          (cd release-assets && for f in *.jar; do sha256sum "$f" > "$f.sha256"; done)
+          # (Optional) your plugin already created .asc files — copy if needed:
+          cp target/*.asc release-assets/ || true
+
       - name: Create GitHub Release
+        id: ghrel
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
+          body: |
+            ## Coordinates
+            ```
+            <dependency>
+              <groupId>io.github.nina2dv</groupId>
+              <artifactId>xml-validation-central-maven-test</artifactId>
+              <version>${{ github.ref_name#v }}</version>
+            </dependency>
+            ```
+
+            ## What’s new
+            - Auto generated notes below, plus curated highlights:
+
+            ## Checksums
+            See attached `*.sha256`.
+
+            ## PGP
+            Artifacts are signed with key fingerprint `${{ secrets.GPG_KEY_FPR }}`.
+
+            ## Links
+            - Sonatype Central: https://central.sonatype.com/artifact/io.github.nina2dv/xml-validation-central-maven-test/${{ github.ref_name#v }}
           generate_release_notes: true
+          files: |
+            release-assets/*
+      

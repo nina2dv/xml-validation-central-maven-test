@@ -55,13 +55,12 @@ jobs:
 
       - name: Build, sign, and publish to Central
         env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mvn -Pdeployment -B -ntp \
             -Dgpg.keyname=${{ secrets.GPG_KEY_FPR }} \
-            -Dgpg.passphrase="$GPG_PASSPHRASE" \
             clean deploy
-
+      
 
       # (Optional) Create a GitHub Release page for convenience
       - name: Create GitHub Release

@@ -36,6 +36,15 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase:  ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: GPG can sign non-interactively
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          gpg --list-secret-keys --keyid-format LONG
+          echo ok > /tmp/t.txt
+          gpg --batch --yes --pinentry-mode loopback \
+              --passphrase "$GPG_PASSPHRASE" -ab /tmp/t.txt
+
       - name: Set POM version from tag
         run: mvn -B -ntp versions:set -DnewVersion=${{ steps.v.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules=true
 

@@ -20,9 +20,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Extract "1.2.3" from tag "v1.2.3", store as step output and job env
       - name: Extract version from tag
         id: v
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Set up Java & Maven (Central + GPG)
         uses: actions/setup-java@v4
@@ -30,21 +34,15 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-          # Write placeholders that reference env vars (resolved at mvn run time)
           server-id: central
-          server-username: MAVEN_USERNAME         # <-- placeholder
-          server-password: MAVEN_CENTRAL_TOKEN    # <-- placeholder
+          server-username: MAVEN_USERNAME         # env placeholder
+          server-password: MAVEN_CENTRAL_TOKEN    # env placeholder
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE    # <-- placeholder
-
-      # Optional sanity check (redacted)
-      # - name: Inspect Maven settings (redacted)
-      #   run: |
-      #     sed -E 's@(<username>).*?(</username>)@\1***\2@; s@(<password>).*?(</password>)@\1***\2@' ~/.m2/settings.xml | head -n 120
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE    # env placeholder
 
       - name: GPG can sign non-interactively
         env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}   # must match placeholder above
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           gpg --list-secret-keys --keyid-format LONG
           echo ok > /tmp/t.txt
@@ -52,7 +50,7 @@ jobs:
             --passphrase "$MAVEN_GPG_PASSPHRASE" -ab /tmp/t.txt
 
       - name: Set POM version from tag
-        run: mvn -B -ntp versions:set -DnewVersion=${{ steps.v.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules=true
+        run: mvn -B -ntp versions:set -DnewVersion="${{ env.VERSION }}" -DgenerateBackupPoms=false -DprocessAllModules=true
 
       - name: Must not be a SNAPSHOT
         run: |
@@ -60,24 +58,14 @@ jobs:
           if [[ "$VER" == *-SNAPSHOT ]]; then echo "SNAPSHOT not allowed in release"; exit 1; fi
 
       - name: Build, sign, and publish
-        # Provide env vars that the settings.xml placeholders will read
         env:
-          MAVEN_USERNAME:         ${{ secrets.CENTRAL_USERNAME }}        # Central User Token username
-          MAVEN_CENTRAL_TOKEN:    ${{ secrets.CENTRAL_PASSWORD }}        # Central User Token password
-          MAVEN_GPG_PASSPHRASE:   ${{ secrets.GPG_PASSPHRASE }}          # GPG passphrase
+          MAVEN_USERNAME:       ${{ secrets.CENTRAL_USERNAME }}   # Central User Token username
+          MAVEN_CENTRAL_TOKEN:  ${{ secrets.CENTRAL_PASSWORD }}   # Central User Token password
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}     # GPG passphrase
         run: |
           mvn -Pdeployment -B -ntp \
             -Dgpg.keyname='${{ secrets.GPG_KEY_FPR }}' \
             clean deploy
-
-      - name: Extract version from tag
-        id: v
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
-
-      - name: Set POM version from tag
-        run: mvn -B -ntp versions:set -DnewVersion=${{ steps.v.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules=true
-
 
       - name: Collect release assets
         run: |
@@ -85,13 +73,10 @@ jobs:
           cp target/*-sources.jar release-assets/ || true
           cp target/*-javadoc.jar release-assets/ || true
           cp target/*.jar release-assets/
-          # Checksums
           (cd release-assets && for f in *.jar; do sha256sum "$f" > "$f.sha256"; done)
-          # (Optional) your plugin already created .asc files — copy if needed:
           cp target/*.asc release-assets/ || true
 
       - name: Create GitHub Release
-        id: ghrel
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
@@ -102,7 +87,7 @@ jobs:
             <dependency>
               <groupId>io.github.nina2dv</groupId>
               <artifactId>xml-validation-central-maven-test</artifactId>
-              <version>${{ steps.v.outputs.VERSION }}</version>
+              <version>${{ env.VERSION }}</version>
             </dependency>
             ```
 
@@ -116,9 +101,7 @@ jobs:
             Artifacts are signed with key fingerprint `${{ secrets.GPG_KEY_FPR }}`.
 
             ## Links
-            - Sonatype Central: https://central.sonatype.com/artifact/io.github.nina2dv/xml-validation-central-maven-test/${{ steps.v.outputs.VERSION }}
+            - Sonatype Central: https://central.sonatype.com/artifact/io.github.nina2dv/xml-validation-central-maven-test/${{ env.VERSION }}
           generate_release_notes: true
           files: |
             release-assets/*
-      
-      

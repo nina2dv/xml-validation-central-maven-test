@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.nina2dv</groupId>
     <artifactId>xml-validation-central-maven-test</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>XML Validator</name>
@@ -148,87 +148,84 @@
                 </executions>
             </plugin>
 
-            <!-- Sources Jar -->
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>package</phase> <!-- Run before 'install'/'deploy' so jars exist -->
-                        <goals>
-                            <goal>jar-no-fork</goal> <!-- Create *-sources.jar without re-running lifecycle -->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            &lt;!&ndash; Sources Jar &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <artifactId>maven-source-plugin</artifactId>-->
+<!--                <version>3.3.1</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-sources</id>-->
+<!--                        <phase>package</phase> &lt;!&ndash; Run before 'install'/'deploy' so jars exist &ndash;&gt;-->
+<!--                        <goals>-->
+<!--                            <goal>jar-no-fork</goal> &lt;!&ndash; Create *-sources.jar without re-running lifecycle &ndash;&gt;-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
-            <!-- JavaDoc Jar -->
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId> <!-- Generates API docs -->
-                <version>3.11.1</version>
-                <configuration>
-                    <!-- Javadoc strictness: allow all checks except 'missing' to avoid failures for sparse docs -->
-                    <doclint>all,-missing</doclint>
-                    <!-- (Optional) <failOnError>false</failOnError> to never fail the build on javadoc errors -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>package</phase> <!-- Build docs jar alongside main jar -->
-                        <goals>
-                            <goal>jar</goal> <!-- Create *-javadoc.jar and attach to the project -->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-
-            <!-- Sign all artifacts (main JAR, sources, javadoc, shaded JAR, POM) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.7</version>
-                <configuration>
-                    <keyname>${gpg.keyname}</keyname>
-                    <gpgArguments>
-                        <arg>--pinentry-mode</arg><arg>loopback</arg>
-                    </gpgArguments>
-                    <!-- On Windows, add: <executable>gpg.exe</executable> -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals><goal>sign</goal></goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            &lt;!&ndash; JavaDoc Jar &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <artifactId>maven-javadoc-plugin</artifactId> &lt;!&ndash; Generates API docs &ndash;&gt;-->
+<!--                <version>3.11.1</version>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; Javadoc strictness: allow all checks except 'missing' to avoid failures for sparse docs &ndash;&gt;-->
+<!--                    <doclint>all,-missing</doclint>-->
+<!--                    &lt;!&ndash; (Optional) <failOnError>false</failOnError> to never fail the build on javadoc errors &ndash;&gt;-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-javadocs</id>-->
+<!--                        <phase>package</phase> &lt;!&ndash; Build docs jar alongside main jar &ndash;&gt;-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal> &lt;!&ndash; Create *-javadoc.jar and attach to the project &ndash;&gt;-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
 
 
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <!-- Must match the <server><id>... in settings.xml -->
-                    <publishingServerId>central</publishingServerId>
+<!--            &lt;!&ndash; Sign all artifacts (main JAR, sources, javadoc, shaded JAR, POM) &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-gpg-plugin</artifactId>-->
+<!--                <version>3.2.7</version>-->
+<!--                <configuration>-->
+<!--                    <keyname>${gpg.keyname}</keyname>-->
+<!--                    <gpgArguments>-->
+<!--                        <arg>&#45;&#45;pinentry-mode</arg><arg>loopback</arg>-->
+<!--                    </gpgArguments>-->
+<!--                    &lt;!&ndash; On Windows, add: <executable>gpg.exe</executable> &ndash;&gt;-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>sign-artifacts</id>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals><goal>sign</goal></goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
-                    <!-- Auto-release on success (no manual click in the portal) -->
-                    <autoPublish>true</autoPublish>
 
-                    <!-- Optional: block until the artifact is published (nice in CI) -->
-                     <waitUntil>published</waitUntil>
-                </configuration>
-            </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.sonatype.central</groupId>-->
+<!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
+<!--                <version>0.8.0</version>-->
+<!--                <extensions>true</extensions>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; Must match the <server><id>... in settings.xml &ndash;&gt;-->
+<!--                    <publishingServerId>central</publishingServerId>-->
+
+<!--                    &lt;!&ndash; Auto-release on success (no manual click in the portal) &ndash;&gt;-->
+<!--                    <autoPublish>true</autoPublish>-->
+
+<!--                    &lt;!&ndash; Optional: block until the artifact is published (nice in CI) &ndash;&gt;-->
+<!--                     <waitUntil>published</waitUntil>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
         </plugins>
-
-
-
     </build>
 
     <!-- Maven Profiles for running validations individually -->
@@ -339,6 +336,82 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+
+                    <!-- Attach sources.jar at package -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Attach javadoc.jar at package -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.1</version>
+                        <configuration>
+                            <doclint>all,-missing</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Sign everything at verify -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- optional: explicitly choose key -->
+                            <!-- <keyname>${gpg.keyname}</keyname> -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg><arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Publish at deploy -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.8.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <!-- 'uploaded' returns sooner; 'published' waits until it’s visible -->
+                            <waitUntil>uploaded</waitUntil>
+                        </configuration>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>

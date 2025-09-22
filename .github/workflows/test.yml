@@ -1,4 +1,4 @@
-name: publish artifacts
+name: Testing
 on:
   push:
     tags: ['v*']          # tag format: v1.2.3

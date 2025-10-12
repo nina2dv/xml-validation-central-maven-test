@@ -1,13 +1,16 @@
 name: release-please
-
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: {}   # allow manual runs
+  workflow_dispatch: {}
 
 permissions:
-  contents: write         # needed to push release commits & create releases
+  contents: write
   pull-requests: write
+
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   release:
@@ -16,7 +19,6 @@ jobs:
       - name: Release Please
         uses: googleapis/release-please-action@v4
         with:
-          # For a single Maven project in repo root:
           release-type: maven
           manifest-file: ".release-please-manifest.json"
           config-file: "release-please-config.json"

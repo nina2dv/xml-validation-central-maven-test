@@ -1,126 +1,37 @@
-name: publish artifacts
+name: "Publish Artifact"
+
 on:
-  push:
-    tags: ['v*']          # tag format: v1.2.3
   workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag to release (e.g., v1.2.3)'
-        required: false
 
 permissions:
   contents: write
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  publish:
+  publish-artifact:
     runs-on: ubuntu-latest
+    name: Publish artifact via The Central Portal
     steps:
-      - name: Checkout (with tags)
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
-      # Extract VERSION="1.2.3" from either the pushed tag (v1.2.3) or manual input
-      - name: Extract version from tag
-        id: v
-        shell: bash
-        run: |
-          set -euo pipefail
-          TAG="${{ github.ref_type == 'tag' && github.ref_name || inputs.tag || '' }}"
-          if [[ -z "${TAG}" ]]; then
-            echo "No tag available. Provide one via workflow_dispatch input 'tag' (e.g., v1.2.3)." >&2
-            exit 1
-          fi
-          # Strip only a single leading 'v' if present
-          VERSION="${TAG#v}"
-          if [[ -z "${VERSION}" ]]; then
-            echo "Failed to derive VERSION from tag '${TAG}'." >&2
-            exit 1
-          fi
-          echo "VERSION=${VERSION}" | tee -a "$GITHUB_ENV"
-          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Set up Java & Maven (Central + GPG)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: '21'
+          java-version: '17'
+          distribution: 'temurin'
           cache: maven
           server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          server-username: MAVEN_USERNAME # env variable for username in deploy
+          server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
 
-      - name: GPG can sign non-interactively
+      - name: Publish artifact
+        run: mvn clean deploy -P deployment
         env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          gpg --list-secret-keys --keyid-format LONG
-          echo ok > /tmp/t.txt
-          gpg --batch --yes --pinentry-mode loopback \
-            --passphrase "$MAVEN_GPG_PASSPHRASE" -ab /tmp/t.txt
-
-      - name: Set POM version from tag
-        run: mvn -B -ntp versions:set -DnewVersion="${{ steps.v.outputs.VERSION }}" -DgenerateBackupPoms=false -DprocessAllModules=true
-
-      - name: Must not be a SNAPSHOT
-        run: |
-          VER=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
-          if [[ "$VER" == *-SNAPSHOT ]]; then
-            echo "SNAPSHOT not allowed in release"
-            exit 1
-          fi
-
-      - name: Build, sign, and publish
-        env:
-          MAVEN_USERNAME:       ${{ secrets.CENTRAL_USERNAME }}   # Central User Token username
-          MAVEN_CENTRAL_TOKEN:  ${{ secrets.CENTRAL_PASSWORD }}   # Central User Token password
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}     # GPG passphrase
-        run: |
-          mvn -Pdeployment -B -ntp \
-            -Dgpg.keyname='${{ secrets.GPG_KEY_FPR }}' \
-            clean deploy
-
-      - name: Collect release assets
-        run: |
-          mkdir -p release-assets
-          cp target/*-sources.jar release-assets/ || true
-          cp target/*-javadoc.jar release-assets/ || true
-          cp target/*.jar release-assets/
-          (cd release-assets && for f in *.jar; do sha256sum "$f" > "$f.sha256"; done)
-          cp target/*.asc release-assets/ || true
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
-          name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
-          body: |
-            ## Coordinates
-            ```
-            <dependency>
-              <groupId>io.github.nina2dv</groupId>
-              <artifactId>xml-validation-central-maven-test</artifactId>
-              <version>${{ steps.v.outputs.VERSION }}</version>
-            </dependency>
-            ```
-
-            ## What’s new
-            - Auto generated notes below, plus curated highlights:
-
-            ## Checksums
-            See attached `*.sha256`.
-
-            ## PGP
-            Artifacts are signed with key fingerprint `${{ secrets.GPG_KEY_FPR }}`.
-
-            ## Links
-            - Sonatype Central: https://central.sonatype.com/artifact/io.github.nina2dv/xml-validation-central-maven-test/${{ steps.v.outputs.VERSION }}
-          generate_release_notes: true
-          files: |
-            release-assets/*
+          MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

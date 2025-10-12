@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.nina2dv</groupId>
     <artifactId>xml-validation-central-maven-test</artifactId>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>XML Validator</name>

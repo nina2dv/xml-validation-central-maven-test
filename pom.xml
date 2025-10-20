@@ -66,6 +66,8 @@
     </dependencies>
 
     <build>
+
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -143,6 +145,29 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <!-- Tag name like v0.1.0 -->
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+
+                    <!-- Build to run in release:prepare (prevents broken releases) -->
+                    <preparationGoals>clean verify</preparationGoals>
+
+                    <!-- Profile to use during perform (Central publish profile) -->
+                    <releaseProfiles>deployment</releaseProfiles>
+
+                    <!-- Goal to run during perform (deploy from the tag) -->
+                    <goals>deploy</goals>
+
+                    <!-- push commits & tag back -->
+                    <pushChanges>false</pushChanges>
+                </configuration>
             </plugin>
 
 <!--            &lt;!&ndash; Sources Jar &ndash;&gt;-->

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/nina2dv/xml-validation-central-maven-test/compare/v1.1.0...v1.1.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* version ([f9f8a0d](https://github.com/nina2dv/xml-validation-central-maven-test/commit/f9f8a0d671b9c5ed7a79f729572ce2bdfba74817))
+* version ([5bbce67](https://github.com/nina2dv/xml-validation-central-maven-test/commit/5bbce67cc16e3ef51ec592b64a99f68e1d9a96fd))
+
 ## [1.1.0](https://github.com/nina2dv/xml-validation-central-maven-test/compare/v1.0.11...v1.1.0) (2025-10-12)
 
 

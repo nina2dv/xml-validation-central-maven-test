@@ -415,9 +415,9 @@
                         <configuration>
                             <!-- optional: explicitly choose key -->
                             <!-- <keyname>${gpg.keyname}</keyname> -->
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg><arg>loopback</arg>
-                            </gpgArguments>
+<!--                            <gpgArguments>-->
+<!--                                <arg>&#45;&#45;pinentry-mode</arg><arg>loopback</arg>-->
+<!--                            </gpgArguments>-->
                         </configuration>
                     </plugin>
 

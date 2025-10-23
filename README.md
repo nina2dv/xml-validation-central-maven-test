@@ -1,5 +1,8 @@
 ## Maven profiles to validate XML against XSD or Schematron.
 
+
+This is a test project
+
 XSD: `mvn clean verify -P xsd-validation`
 
 Schematron: `mvn clean verify -P schematron-validation`
